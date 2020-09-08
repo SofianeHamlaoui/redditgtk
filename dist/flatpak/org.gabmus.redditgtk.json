@@ -1,0 +1,97 @@
+{
+    "app-id": "org.gabmus.redditgtk",
+    "command": "redditgtk",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "3.36",
+    "sdk": "org.gnome.Sdk",
+    "finish-args": [
+        "--device=dri",
+        "--share=ipc",
+        "--socket=fallback-x11",
+        "--socket=wayland",
+        "--filesystem=home:rw"
+    ],
+    "modules": [
+        {
+            "name": "libhandy",
+            "buildsystem": "meson",
+            "config-opts": [
+                "--buildtype=release"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/GNOME/libhandy",
+                    "tag": "0.91.0"
+                }
+            ]
+        },
+        {
+            "name": "python-praw",
+            "buildsystem": "simple",
+            "ensure-writable": [
+                "/lib/python*/site-packages/easy-install.pth",
+                "/lib/python*/site-packages/setuptools.pth",
+                "/app/lib/python*/site-packages/easy-install.pth",
+                "/app/lib/python*/site-packages/setuptools.pth"
+            ],
+            "build-commands": [
+                "python3 setup.py install --prefix=/app --root=/"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/praw-dev/praw",
+                    "tag": "v7.1.0"
+                },
+                {
+                    "type": "shell",
+                    "commands": [
+                        "sed -i 's/if not platform_/if not dirs/' setup.py"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "python-flask",
+            "buildsystem": "simple",
+            "ensure-writable": [
+                "/lib/python*/site-packages/easy-install.pth",
+                "/lib/python*/site-packages/setuptools.pth",
+                "/app/lib/python*/site-packages/easy-install.pth",
+                "/app/lib/python*/site-packages/setuptools.pth"
+            ],
+            "build-commands": [
+                "python3 setup.py install --prefix=/app --root=/"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/pallets/flask",
+                    "tag": "1.1.2"
+                },
+                {
+                    "type": "shell",
+                    "commands": [
+                        "sed -i 's/if not platform_/if not dirs/' setup.py"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "redditgtk",
+            "buildsystem": "meson",
+            "builddir": true,
+            "config-opts": [
+                "--buildtype=release"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/GabMus/redditgtk",
+                    "tag": "0.3"
+                }
+            ]
+        }
+    ]
+}

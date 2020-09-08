@@ -1,0 +1,6 @@
+data/org.gabmus.redditgtk.appdata.xml.in
+data/org.gabmus.redditgtk.desktop.in
+data/ui/headerbar.glade
+data/ui/menu.xml
+data/ui/shortcutsWindow.xml
+redditgtk/settings_window.py

@@ -1,0 +1,96 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Gabriele Musco <gabmus@disroot.org>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: it\n"
+"X-Generator: Poedit 2.4.1\n"
+
+#: ../redditgtk/settings_window.py:70
+msgid "Choose a folder"
+msgstr ""
+
+#: ../redditgtk/settings_window.py:219
+msgid "General"
+msgstr ""
+
+#: ../redditgtk/settings_window.py:223
+msgid "General Settings"
+msgstr ""
+
+#: ../redditgtk/settings_window.py:258
+msgid "View"
+msgstr ""
+
+#: ../redditgtk/settings_window.py:262
+msgid "View Settings"
+msgstr ""
+
+#: ../redditgtk/settings_window.py:265
+msgid "Dark mode"
+msgstr ""
+
+#: ../data/ui/menu.xml:6
+msgid "Preferences"
+msgstr ""
+
+#: ../data/ui/menu.xml:10
+msgid "Keyboard Shortcuts"
+msgstr ""
+
+#: ../data/ui/menu.xml:14
+msgid "About Reddit GTK"
+msgstr ""
+
+#: ../data/ui/shortcutsWindow.xml:18
+msgid "Open Keyboard Shortcuts"
+msgstr ""
+
+#: ../data/ui/shortcutsWindow.xml:25
+msgid "Open Menu"
+msgstr ""
+
+#: ../data/ui/shortcutsWindow.xml:32
+msgid "Open Preferences"
+msgstr ""
+
+#: ../data/ui/shortcutsWindow.xml:39
+msgid "Quit"
+msgstr ""
+
+#: ../data/ui/headerbar.glade:20
+msgid "Menu"
+msgstr ""
+
+#: ../data/org.gabmus.redditgtk.desktop.in:3
+msgid "@prettyname@"
+msgstr ""
+
+#: ../data/org.gabmus.redditgtk.desktop.in:4
+msgid "A GTK app for Reddit"
+msgstr ""
+
+#: ../data/org.gabmus.redditgtk.desktop.in:11
+msgid "reddit;"
+msgstr ""
+
+#: ../data/org.gabmus.redditgtk.appdata.xml.in:4
+msgid "Reddit GTK"
+msgstr ""
+
+#: ../data/org.gabmus.redditgtk.appdata.xml.in:5
+msgid "Gabriele Musco"
+msgstr ""
+
+#: ../data/org.gabmus.redditgtk.appdata.xml.in:15
+msgid "Reddit GTK is a GTK app for Reddit"
+msgstr ""
+
+#: ../data/org.gabmus.redditgtk.appdata.xml.in:30
+msgid "First release"
+msgstr ""

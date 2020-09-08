@@ -29,7 +29,7 @@ def get_auth_link(reddit):
             'identity', 'history', 'mysubreddits', 'read', 'save', 'report',
             'submit', 'subscribe', 'vote', 'account', 'edit', 'livemanage'
         ],
-        f'reddit-gtk-t{datetime.now().timestamp()}',
+        f'redditgtk-t{datetime.now().timestamp()}',
         'permanent'
     )
 
@@ -39,7 +39,7 @@ def get_unauthorized_client():
         client_id='5rQWiP4kMWi7CA',
         client_secret=None,
         redirect_uri='http://localhost:8080',
-        user_agent='reddit-gtk by /u/gabmus'
+        user_agent='redditgtk by /u/gabmus'
     )
     return reddit
 

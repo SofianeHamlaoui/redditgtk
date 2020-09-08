@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+    <menu id="generalMenu">
+        <section>
+            <item>
+                <attribute name="label" translatable="yes">Preferences</attribute>
+                <attribute name="action">app.settings</attribute>
+            </item>
+            <item>
+                <attribute name="label" translatable="yes">Keyboard Shortcuts</attribute>
+                <attribute name="action">app.shortcuts</attribute>
+            </item>
+            <item>
+                <attribute name="label" translatable="yes">About Reddit GTK</attribute>
+                <attribute name="action">app.about</attribute>
+            </item>
+        </section>
+    </menu>
+</interface>

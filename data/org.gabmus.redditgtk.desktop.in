@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=@prettyname@
+Comment=A GTK app for Reddit
+Exec=@bindir@/@projectname@ %u
+Icon=@appid@
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Network
+Keywords=reddit;

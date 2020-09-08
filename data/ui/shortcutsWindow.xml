@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <object class="GtkShortcutsWindow" id="shortcuts-win">
+    <property name="modal">1</property>
+    <child>
+      <object class="GtkShortcutsSection">
+        <property name="visible">1</property>
+        <property name="section-name">shortcuts</property>
+        <property name="max-height">15</property>
+        <child>
+          <object class="GtkShortcutsGroup">
+            <property name="visible">1</property>
+            <property name="title" translatable="yes">General</property>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="visible">1</property>
+                <property name="accelerator">&lt;ctrl&gt;question</property>
+                <property name="title" translatable="yes">Open Keyboard Shortcuts</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="visible">1</property>
+                <property name="accelerator">F10</property>
+                <property name="title" translatable="yes">Open Menu</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="visible">1</property>
+                <property name="accelerator">&lt;ctrl&gt;comma</property>
+                <property name="title" translatable="yes">Open Preferences</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="visible">1</property>
+                <property name="accelerator">&lt;ctrl&gt;Q</property>
+                <property name="title" translatable="yes">Quit</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

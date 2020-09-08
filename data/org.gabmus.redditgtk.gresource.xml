@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/org/gabmus/redditgtk">
+    <file compressed="true">org.gabmus.redditgtk.service.desktop</file>
+
+    <file compressed="true">ui/gtk_style.css</file>
+    <file preprocess="xml-stripblanks">ui/main_ui.glade</file>
+    <file preprocess="xml-stripblanks">ui/headerbar.glade</file>
+    <file preprocess="xml-stripblanks">ui/menu.xml</file>
+    <file preprocess="xml-stripblanks">ui/shortcutsWindow.xml</file>
+    <file preprocess="xml-stripblanks">aboutdialog.glade</file>
+
+    <file preprocess="xml-stripblanks">icons/org.gabmus.redditgtk-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/org.gabmus.redditgtk.svg</file>
+  </gresource>
+</gresources>
