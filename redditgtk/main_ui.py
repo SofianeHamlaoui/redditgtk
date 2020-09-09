@@ -12,4 +12,18 @@ class MainUI(Gtk.Bin):
         )
         self.ui_box = self.builder.get_object('ui_box')
 
+        # TODO: remove
+        from redditgtk.post_preview import PostPreviewListbox
+        from redditgtk.api.auth import get_authorized_client
+        from os import system
+        reddit = get_authorized_client(lambda l: system(
+            f'xdg-open "{l}"'
+        ))
+        self.ui_box.add(PostPreviewListbox(
+            reddit.front.best()
+        ))
+
+        # TODO
+
         self.add(self.ui_box)
+        self.show_all()

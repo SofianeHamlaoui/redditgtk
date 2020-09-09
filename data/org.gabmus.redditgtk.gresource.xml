@@ -5,6 +5,7 @@
 
     <file compressed="true">ui/gtk_style.css</file>
     <file preprocess="xml-stripblanks">ui/main_ui.glade</file>
+    <file preprocess="xml-stripblanks">ui/post_preview.glade</file>
     <file preprocess="xml-stripblanks">ui/headerbar.glade</file>
     <file preprocess="xml-stripblanks">ui/menu.xml</file>
     <file preprocess="xml-stripblanks">ui/shortcutsWindow.xml</file>

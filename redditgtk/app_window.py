@@ -64,7 +64,6 @@ class AppWindow(Handy.ApplicationWindow):
         self.emit('destroy')
 
     def on_destroy(self, *args):
-        self.main_ui.file_manager.save_current_file()
         self.confman.conf['windowsize'] = {
             'width': self.size_allocation.width,
             'height': self.size_allocation.height
