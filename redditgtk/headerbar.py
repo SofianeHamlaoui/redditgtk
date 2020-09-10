@@ -13,6 +13,9 @@ class GHeaderbar(Handy.WindowHandle):
         self.builder.connect_signals(self)
         self.confman = ConfManager()
         self.headerbar = self.builder.get_object('headerbar')
+        self.view_switcher = Handy.ViewSwitcher()
+        self.headerbar.set_custom_title(self.view_switcher)
+        self.view_switcher.set_valign(Gtk.Align.FILL)
 
         self.add(self.headerbar)
         self.menu_btn = self.builder.get_object(

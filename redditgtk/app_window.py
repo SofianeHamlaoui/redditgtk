@@ -19,7 +19,7 @@ class AppWindow(Handy.ApplicationWindow):
         self.headerbar.set_vexpand(False)
         self.headerbar.set_hexpand(True)
 
-        self.main_ui = MainUI()
+        self.main_ui = MainUI(self.headerbar)
         self.main_box.add(self.main_ui)
         self.main_ui.set_hexpand(True)
         self.main_ui.set_vexpand(True)
