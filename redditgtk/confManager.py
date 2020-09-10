@@ -26,7 +26,8 @@ class ConfManager(metaclass=Singleton):
             'width': 350,
             'height': 650
         },
-        'dark_mode': False
+        'dark_mode': False,
+        'refresh_token': ''
     }
 
     def __init__(self):

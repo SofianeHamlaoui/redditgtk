@@ -1,25 +1,58 @@
+from gettext import gettext as _
 import praw
 from datetime import datetime
 from flask import Flask, request
 from multiprocessing import Queue, Process
 from time import sleep
+from redditgtk.confManager import ConfManager
 
 
-def get_authorized_client(openLinkFunction):
+def get_authorized_client(openLinkFunction, retry=False):
 
-    def cb(code):
-        q.put(code)
-
-    q = Queue()
-    p = Process(target=start_auth_callback_server, args=(cb,))
-    p.start()
     reddit = get_unauthorized_client()
-    openLinkFunction(get_auth_link(reddit))
-    code = q.get()
-    sleep(1)  # give flask the time to respond
-    p.terminate()
-    p.join()
-    reddit.auth.authorize(code)
+    confman = ConfManager()
+    refresh_token = ''
+    code = ''
+    if not retry:
+        refresh_token = confman.conf['refresh_token']
+    
+    if refresh_token != '':
+        try:
+            return get_preauthorized_client(refresh_token)
+        except Exception:
+            print(
+                _('Error getting client with refresh token, retrying...')
+            )
+            return get_authorized_client(openLinkFunction, True)
+    else:
+        q = Queue()
+
+        def cb(code):
+            q.put(code)
+
+        p = Process(target=start_auth_callback_server, args=(cb,))
+        p.start()
+        openLinkFunction(get_auth_link(reddit))
+        code = q.get()
+        sleep(1)  # give flask the time to respond
+        p.terminate()
+        p.join()
+    try:
+        refresh_token = reddit.auth.authorize(code)
+        confman.conf['refresh_token'] = refresh_token
+        confman.save_conf()
+    except Exception:
+        if not retry:
+            print(
+                _('Error authorizing reddit client, retrying...')
+            )
+            return get_authorized_client(openLinkFunction, retry=True)
+        else:
+            print(
+                _('Error authorizing reddit client after retry, quitting...')
+            )
+            import sys
+            sys.exit(1)
     return reddit
 
 
@@ -34,14 +67,26 @@ def get_auth_link(reddit):
     )
 
 
+USER_AGENT = 'redditgtk by /u/gabmus'
+CLIENT_ID = '5rQWiP4kMWi7CA'
+
+
 def get_unauthorized_client():
-    reddit = praw.Reddit(
-        client_id='5rQWiP4kMWi7CA',
+    return praw.Reddit(
+        client_id=CLIENT_ID,
         client_secret=None,
         redirect_uri='http://localhost:8080',
-        user_agent='redditgtk by /u/gabmus'
+        user_agent=USER_AGENT
     )
-    return reddit
+
+
+def get_preauthorized_client(refresh_token):
+    return praw.Reddit(
+        client_id=CLIENT_ID,
+        client_secret=None,
+        refresh_token=refresh_token,
+        user_agent=USER_AGENT
+    )
 
 
 def start_auth_callback_server(callback):
