@@ -1,9 +1,10 @@
 from redditgtk.path_utils import is_image
 from redditgtk.download_manager import download_img
-from gi.repository import Gtk, GdkPixbuf, Handy
+from gi.repository import Gtk, GLib, GdkPixbuf, Handy
 from requests import HTTPError
 from dateutil import tz
 from datetime import datetime
+from threading import Thread, Lock
 
 
 class PostPreview(Gtk.Bin):
@@ -111,7 +112,22 @@ class PostPreviewListbox(Gtk.ListBox):
             else:
                 break
 
-    def load_more(self, num=10):
-        for i in range(num):
-            self.add(PostPreviewListboxRow(next(self.post_gen)))
+    def _on_post_preview_row_loaded(self, post_preview_row):
+        self.add(post_preview_row)
         self.show_all()
+
+    def _async_create_post_preview_row(self, lock, gen):
+        lock.acquire()
+        post = next(gen)
+        lock.release()
+        row = PostPreviewListboxRow(post)
+        GLib.idle_add(self._on_post_preview_row_loaded, row)
+
+    def load_more(self, num=10):
+        lock = Lock()
+        for i in range(num):
+            t = Thread(
+                target=self._async_create_post_preview_row,
+                args=(lock, self.post_gen)
+            )
+            t.start()
