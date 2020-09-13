@@ -25,17 +25,20 @@ class MainUI(Gtk.Bin):
             {
                 'name': 'best',
                 'title': _('Best'),
-                'gen': reddit.front.best()
+                'gen': reddit.front.best(),
+                'icon': 'org.gabmus.redditgtk.best-symbolic'
             },
             {
                 'name': 'hot',
                 'title': _('Hot'),
-                'gen': reddit.front.hot()
+                'gen': reddit.front.hot(),
+                'icon': 'org.gabmus.redditgtk.hot-symbolic'
             },
             {
                 'name': 'new',
                 'title': _('New'),
-                'gen': reddit.front.new()
+                'gen': reddit.front.new(),
+                'icon': 'org.gabmus.redditgtk.new-symbolic'
             }
         ])
         self.ui_box.add(self.sections_stack)
