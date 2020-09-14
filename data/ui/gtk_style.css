@@ -1,0 +1,12 @@
+.nested {
+    border-left: 2px solid @theme_fg_color;
+    padding-left: 4px;
+}
+
+.comment_author {
+    color: #1c71d8;
+}
+
+.op_comment {
+    color: #ff7800;
+}
