@@ -1,4 +1,5 @@
-from gi.repository import Gtk
+from gettext import gettext as _
+from gi.repository import Gtk, Handy
 from redditgtk.common_post_box import CommonPostBox
 
 
@@ -18,7 +19,10 @@ class CommentBox(Gtk.Bin):
         self.replies_container = self.builder.get_object('replies_container')
 
         self.comment_label.set_text(self.comment.body)
-        self.author_label.set_text(f'u/{self.comment.author.name}')
+        author_name = _('Author unknown')
+        if hasattr(self.comment, 'author') and self.comment.author is not None:
+            author_name = f'u/{self.comment.author.name}'
+        self.author_label.set_text(author_name)
         self.upvotes_label.set_text(str(self.comment.ups))
 
         if self.level > 0:
@@ -72,21 +76,46 @@ class PostBody(CommonPostBox):
         self.body_label.set_text(self.post.selftext)
 
 
+class PostDetailsHeaderbar(Handy.WindowHandle):
+    def __init__(self, post, back_func, **kwargs):
+        super().__init__(**kwargs)
+        self.post = post
+        self.builder = Gtk.Builder.new_from_resource(
+            '/org/gabmus/redditgtk/ui/post_details_headerbar.glade'
+        )
+        self.headerbar = self.builder.get_object('headerbar')
+        self.headerbar.set_title(self.post.title)
+
+        self.back_btn = self.builder.get_object('back_btn')
+        self.back_btn.connect('clicked', lambda *args: back_func())
+
+        self.add(self.headerbar)
+
+
 class PostDetailsView(Gtk.ScrolledWindow):
-    def __init__(self, post, **kwargs):
+    def __init__(self, post, back_func, **kwargs):
         super().__init__(**kwargs)
         self.post = post
         self.main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.inner_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.post_body = PostBody(self.post)
         self.multi_comments_box = MultiCommentsBox(self.post.comments)
-        self.main_box.pack_start(self.post_body, False, False, 6)
-        self.main_box.pack_start(
-            Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL),
-            False,
-            False,
-            6
-        )
-        self.main_box.pack_start(self.multi_comments_box, False, False, 6)
+
+        self.headerbar = PostDetailsHeaderbar(self.post, back_func)
+        self.main_box.add(self.headerbar)
+        self.headerbar.set_vexpand(False)
+        self.headerbar.set_hexpand(True)
+
+        self.inner_box.add(self.post_body)
+        self.post_body.set_vexpand(True)
+        self.separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
+        self.inner_box.add(self.separator)
+        self.separator.set_vexpand(False)
+
+        self.inner_box.add(self.multi_comments_box)
+        self.inner_box.set_vexpand(False)
         self.sw = Gtk.ScrolledWindow()
-        self.sw.add(self.main_box)
-        self.add(self.sw)
+        self.sw.add(self.inner_box)
+        self.main_box.add(self.sw)
+        self.sw.set_vexpand(True)
+        self.add(self.main_box)

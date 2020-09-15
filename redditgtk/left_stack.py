@@ -5,7 +5,7 @@ from redditgtk.front_page_headerbar import FrontPageHeaderbar
 
 
 class LeftStack(Gtk.Stack):
-    def __init__(self, reddit, **kwargs):
+    def __init__(self, reddit, show_post_func, **kwargs):
         super().__init__(**kwargs)
         self.reddit = reddit
 
@@ -30,7 +30,7 @@ class LeftStack(Gtk.Stack):
                 'gen': reddit.front.new(),
                 'icon': 'org.gabmus.redditgtk.new-symbolic'
             }
-        ])
+        ], show_post_func)
         self.front_page_headerbar = FrontPageHeaderbar(self.front_page_stack)
         self.front_page_view.headerbar = self.front_page_headerbar
         self.front_page_view.add(self.front_page_headerbar)

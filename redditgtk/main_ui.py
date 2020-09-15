@@ -13,15 +13,15 @@ class MainUI(Gtk.Bin):
         self.ui_box = self.builder.get_object('ui_box')
 
         # TODO: remove
-        from redditgtk.left_stack import LeftStack
+        from redditgtk.main_leaflet import MainDeck
         from redditgtk.api.auth import get_authorized_client
         from os import system
         reddit = get_authorized_client(lambda l: system(
             f'xdg-open "{l}"'
         ))
-        self.left_stack = LeftStack(reddit)
-        self.ui_box.add(self.left_stack)
-        self.left_stack.set_vexpand(True)
+        self.leaflet = MainDeck(reddit)
+        self.ui_box.add(self.leaflet)
+        self.leaflet.set_vexpand(True)
         # TODO
 
         self.add(self.ui_box)

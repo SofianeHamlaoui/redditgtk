@@ -17,14 +17,17 @@ class SectionScrolledWindow(Gtk.ScrolledWindow):
 
 
 class SectionsStack(Gtk.Stack):
-    def __init__(self, sections: list, **kwargs):
+    def __init__(self, sections: list, show_post_func, **kwargs):
         super().__init__(**kwargs)
         self.sections = sections
 
         self.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
 
         for section in self.sections:
-            post_preview_lbox = PostPreviewListbox(section['gen'])
+            post_preview_lbox = PostPreviewListbox(
+                section['gen'],
+                show_post_func
+            )
             sw = SectionScrolledWindow(post_preview_lbox)
             self.add_titled(
                 sw,

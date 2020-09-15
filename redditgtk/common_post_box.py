@@ -48,7 +48,7 @@ class CommonPostBox(Gtk.Bin):
             image = self.post.url
             if not is_image(image):
                 c_width = 0
-                if not self.post.preview:
+                if not hasattr(self.post, 'preview'):
                     return None
                 for preview in self.post.preview['images'][0]['resolutions']:
                     if preview['width'] > c_width:
