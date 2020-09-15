@@ -13,12 +13,13 @@ class FrontPageHeaderbar(Handy.WindowHandle):
         )
     }
 
-    def __init__(self, front_page_stack, **kwargs):
+    def __init__(self, front_page_stack, reddit, **kwargs):
         super().__init__(**kwargs)
         self.front_page_stack = front_page_stack
         self.builder = Gtk.Builder.new_from_resource(
             '/org/gabmus/redditgtk/ui/headerbar.glade'
         )
+        self.reddit = reddit
         self.builder.connect_signals(self)
         self.confman = ConfManager()
         self.headerbar = self.builder.get_object('headerbar')
@@ -82,6 +83,6 @@ class FrontPageHeaderbar(Handy.WindowHandle):
     def on_new_clicked(self, post_type):
         self.new_post_popover.popdown()
         # TODO: pass actual reddit client
-        np_win = NewPostWindow(None, post_type)
+        np_win = NewPostWindow(self.reddit, post_type)
         np_win.set_transient_for(self.get_toplevel())
         np_win.present()

@@ -33,7 +33,9 @@ class LeftStack(Gtk.Stack):
         ], show_post_func)
         self.front_page_bottom_bar = Handy.ViewSwitcherBar()
         self.front_page_bottom_bar.set_stack(self.front_page_stack)
-        self.front_page_headerbar = FrontPageHeaderbar(self.front_page_stack)
+        self.front_page_headerbar = FrontPageHeaderbar(
+            self.front_page_stack, reddit
+        )
         self.front_page_view.headerbar = self.front_page_headerbar
         self.front_page_view.add(self.front_page_headerbar)
         self.front_page_headerbar.set_vexpand(False)
