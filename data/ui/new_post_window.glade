@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.36.0 -->
+<interface>
+  <requires lib="gtk+" version="3.22"/>
+  <requires lib="gtksourceview" version="4.0"/>
+  <object class="GtkFileFilter" id="filefilter1">
+    <mime-types>
+      <mime-type>image/png</mime-type>
+      <mime-type>image/gif</mime-type>
+      <mime-type>image/jpeg</mime-type>
+      <mime-type>video/mpeg</mime-type>
+    </mime-types>
+  </object>
+  <object class="GtkBox" id="inner_box">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="margin_start">6</property>
+    <property name="margin_end">6</property>
+    <property name="margin_top">6</property>
+    <property name="margin_bottom">6</property>
+    <property name="orientation">vertical</property>
+    <property name="spacing">6</property>
+    <child>
+      <object class="GtkComboBox" id="select_subreddit_combobox">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkEntry" id="title_entry">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="placeholder_text" translatable="yes">Post title...</property>
+        <property name="show_emoji_icon">True</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkBox" id="text_source_view_container">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkScrolledWindow">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="hscrollbar_policy">never</property>
+            <property name="shadow_type">in</property>
+            <child>
+              <object class="GtkSourceView" id="source_view">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="wrap_mode">word-char</property>
+                <property name="left_margin">2</property>
+                <property name="right_margin">2</property>
+                <property name="populate_all">True</property>
+                <property name="monospace">True</property>
+                <property name="tab_width">4</property>
+                <property name="indent_width">4</property>
+                <property name="auto_indent">True</property>
+                <property name="insert_spaces_instead_of_tabs">True</property>
+                <property name="highlight_current_line">True</property>
+                <property name="smart_backspace">True</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">True</property>
+        <property name="fill">True</property>
+        <property name="position">2</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkEntry" id="link_entry">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="placeholder_text" translatable="yes">Link...</property>
+        <property name="input_purpose">url</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">3</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkFileChooserButton" id="file_chooser_btn">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="filter">filefilter1</property>
+        <property name="preview_widget_active">False</property>
+        <property name="title" translatable="yes">Choose an image or video to upload</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">4</property>
+      </packing>
+    </child>
+  </object>
+  <object class="GtkHeaderBar" id="headerbar">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">New post</property>
+    <child>
+      <object class="GtkButton" id="cancel_btn">
+        <property name="label" translatable="yes">Cancel</property>
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">True</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkButton" id="send_btn">
+        <property name="label" translatable="yes">Send</property>
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">True</property>
+        <style>
+          <class name="suggested-action"/>
+        </style>
+      </object>
+      <packing>
+        <property name="pack_type">end</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
+  </object>
+</interface>

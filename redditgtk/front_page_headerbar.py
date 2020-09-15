@@ -1,6 +1,7 @@
 # from gettext import gettext as _
 from gi.repository import Gtk, Handy, GObject
 from redditgtk.confManager import ConfManager
+from redditgtk.new_post_window import NewPostWindow
 
 
 class FrontPageHeaderbar(Handy.WindowHandle):
@@ -48,11 +49,39 @@ class FrontPageHeaderbar(Handy.WindowHandle):
         self.menu_popover.bind_model(self.menu)
         self.menu_popover.set_relative_to(self.menu_btn)
         self.menu_popover.set_modal(True)
-        # self.set_headerbar_controls()
 
-    # def set_headerbar_controls(self, *args):
-    #     self.headerbar.set_show_close_button(True)
-    #     # self.headerbar.set_title('Notorious')
+        self.new_btn = self.builder.get_object('new_btn')
+        self.new_post_popover = self.builder.get_object('new_post_popover')
+        self.new_post_popover.set_relative_to(self.new_btn)
+        self.new_post_popover.set_modal(True)
+        self.new_btn.connect(
+            'clicked',
+            lambda *args: self.new_post_popover.popup()
+        )
+        self.new_text_btn = self.builder.get_object('new_text_btn')
+        self.new_text_btn.connect(
+            'clicked',
+            lambda *args: self.on_new_clicked('text')
+        )
+        self.new_link_btn = self.builder.get_object('new_link_btn')
+        self.new_link_btn.connect(
+            'clicked',
+            lambda *args: self.on_new_clicked('link')
+        )
+        self.new_media_btn = self.builder.get_object('new_media_btn')
+        self.new_media_btn.connect(
+            'clicked',
+            lambda *args: self.on_new_clicked('media')
+        )
+        self.profile_btn = self.builder.get_object('profile_btn')
+        self.refresh_btn = self.builder.get_object('refresh_btn')
 
     def on_menu_btn_clicked(self, *args):
         self.menu_popover.popup()
+
+    def on_new_clicked(self, post_type):
+        self.new_post_popover.popdown()
+        # TODO: pass actual reddit client
+        np_win = NewPostWindow(None, post_type)
+        np_win.set_transient_for(self.get_toplevel())
+        np_win.present()

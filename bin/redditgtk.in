@@ -58,10 +58,16 @@ if __name__ == '__main__':
     import gi
 
     gi.require_version('Gtk', '3.0')
+    gi.require_version('GtkSource', '4')
     gi.require_version('Gdk', '3.0')
     gi.require_version('Handy', '1')
 
-    from gi.repository import Gio
+    from gi.repository import Gio, GObject, GtkSource
+
+    # line below and necessary imports above required to accept GtkSourceView
+    # from glade file
+    GObject.type_register(GtkSource.View)
+
     resource = Gio.Resource.load(os.path.join(pkgdatadir, '@appid@.gresource'))
     resource._register()
 
