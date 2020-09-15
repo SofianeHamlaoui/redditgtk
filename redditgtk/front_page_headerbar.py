@@ -3,10 +3,10 @@ from gi.repository import Gtk, Handy
 from redditgtk.confManager import ConfManager
 
 
-class GHeaderbar(Handy.WindowHandle):
-
-    def __init__(self, **kwargs):
+class FrontPageHeaderbar(Handy.WindowHandle):
+    def __init__(self, front_page_stack, **kwargs):
         super().__init__(**kwargs)
+        self.front_page_stack = front_page_stack
         self.builder = Gtk.Builder.new_from_resource(
             '/org/gabmus/redditgtk/ui/headerbar.glade'
         )
@@ -16,6 +16,7 @@ class GHeaderbar(Handy.WindowHandle):
         self.view_switcher = Handy.ViewSwitcher()
         self.headerbar.set_custom_title(self.view_switcher)
         self.view_switcher.set_valign(Gtk.Align.FILL)
+        self.view_switcher.set_stack(self.front_page_stack)
 
         self.add(self.headerbar)
         self.menu_btn = self.builder.get_object(

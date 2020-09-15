@@ -4,7 +4,7 @@ from redditgtk.confManager import ConfManager
 
 
 class MainUI(Gtk.Bin):
-    def __init__(self, headerbar, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.confman = ConfManager()
         self.builder = Gtk.Builder.new_from_resource(
@@ -12,39 +12,16 @@ class MainUI(Gtk.Bin):
         )
         self.ui_box = self.builder.get_object('ui_box')
 
-        self.headerbar = headerbar
-
         # TODO: remove
-        from redditgtk.sections_stack import SectionsStack
+        from redditgtk.left_stack import LeftStack
         from redditgtk.api.auth import get_authorized_client
         from os import system
         reddit = get_authorized_client(lambda l: system(
             f'xdg-open "{l}"'
         ))
-        self.sections_stack = SectionsStack([
-            {
-                'name': 'best',
-                'title': _('Best'),
-                'gen': reddit.front.best(),
-                'icon': 'org.gabmus.redditgtk.best-symbolic'
-            },
-            {
-                'name': 'hot',
-                'title': _('Hot'),
-                'gen': reddit.front.hot(),
-                'icon': 'org.gabmus.redditgtk.hot-symbolic'
-            },
-            {
-                'name': 'new',
-                'title': _('New'),
-                'gen': reddit.front.new(),
-                'icon': 'org.gabmus.redditgtk.new-symbolic'
-            }
-        ])
-        self.ui_box.add(self.sections_stack)
-        self.sections_stack.set_vexpand(True)
-        self.headerbar.view_switcher.set_stack(self.sections_stack)
-
+        self.left_stack = LeftStack(reddit)
+        self.ui_box.add(self.left_stack)
+        self.left_stack.set_vexpand(True)
         # TODO
 
         self.add(self.ui_box)

@@ -1,7 +1,7 @@
 from gi.repository import Gtk, Handy
 from redditgtk.confManager import ConfManager
-from redditgtk.headerbar import GHeaderbar
 from redditgtk.main_ui import MainUI
+from redditgtk.accel_manager import add_accelerators
 
 
 class AppWindow(Handy.ApplicationWindow):
@@ -12,19 +12,31 @@ class AppWindow(Handy.ApplicationWindow):
         self.set_title('Reddit GTK')
         self.set_icon_name('org.gabmus.redditgtk')
 
-        self.headerbar = GHeaderbar()
-        # self.set_titlebar(self.headerbar)
         self.main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self.main_box.add(self.headerbar)
-        self.headerbar.set_vexpand(False)
-        self.headerbar.set_hexpand(True)
 
-        self.main_ui = MainUI(self.headerbar)
+        self.main_ui = MainUI()
         self.main_box.add(self.main_ui)
         self.main_ui.set_hexpand(True)
         self.main_ui.set_vexpand(True)
 
         self.add(self.main_box)
+
+        def toggle_popover(*args):
+            popover = self.main_ui.left_stack.get_headerbar().menu_popover
+            if popover.is_visible():
+                popover.popdown()
+            else:
+                popover.popup()
+
+        add_accelerators(
+            self,
+            [
+                {
+                    'combo': 'F10',
+                    'cb': toggle_popover
+                }
+            ]
+        )
 
         # Why this -52?
         # because every time a new value is saved, for some reason
@@ -36,29 +48,6 @@ class AppWindow(Handy.ApplicationWindow):
         )
         self.size_allocation = self.get_allocation()
         self.connect('size-allocate', self.update_size_allocation)
-
-        # accel_group is for keyboard shortcuts
-        self.accel_group = Gtk.AccelGroup()
-        self.add_accel_group(self.accel_group)
-        shortcuts_l = [
-            {
-                'combo': 'F10',
-                'cb': lambda *args: (
-                    self.headerbar.menu_popover.popup
-                    if not self.headerbar.menu_popover.is_visible()
-                    else self.headerbar.menu_popover.popdown
-                )()
-            }
-        ]
-        for s in shortcuts_l:
-            self.add_accelerator(s['combo'], s['cb'])
-
-    def add_accelerator(self, shortcut, callback):
-        if shortcut:
-            key, mod = Gtk.accelerator_parse(shortcut)
-            self.accel_group.connect(
-                key, mod, Gtk.AccelFlags.VISIBLE, callback
-            )
 
     def emit_destroy(self, *args):
         self.emit('destroy')
