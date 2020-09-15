@@ -7,7 +7,6 @@ class SectionScrolledWindow(Gtk.ScrolledWindow):
         super().__init__(**kwargs)
         self.post_preview_lbox = post_preview_lbox
         self.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        self.add(self.post_preview_lbox)
         self.connect('edge_reached', self.on_edge_reached)
 
     def on_edge_reached(self, sw, pos):
@@ -36,7 +35,8 @@ class SectionsStack(Gtk.Stack):
                 show_post_func
             )
             post_preview_clamp.add(post_preview_lbox)
-            sw = SectionScrolledWindow(post_preview_clamp)
+            sw = SectionScrolledWindow(post_preview_lbox)
+            sw.add(post_preview_clamp)
             self.add_titled(
                 sw,
                 section['name'],

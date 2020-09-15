@@ -1,5 +1,5 @@
 from gettext import gettext as _
-from gi.repository import Gtk
+from gi.repository import Gtk, Handy
 from redditgtk.sections_stack import SectionsStack
 from redditgtk.front_page_headerbar import FrontPageHeaderbar
 
@@ -31,6 +31,8 @@ class LeftStack(Gtk.Stack):
                 'icon': 'org.gabmus.redditgtk.new-symbolic'
             }
         ], show_post_func)
+        self.front_page_bottom_bar = Handy.ViewSwitcherBar()
+        self.front_page_bottom_bar.set_stack(self.front_page_stack)
         self.front_page_headerbar = FrontPageHeaderbar(self.front_page_stack)
         self.front_page_view.headerbar = self.front_page_headerbar
         self.front_page_view.add(self.front_page_headerbar)
@@ -39,6 +41,14 @@ class LeftStack(Gtk.Stack):
         self.front_page_view.add(self.front_page_stack)
         self.front_page_stack.set_hexpand(True)
         self.front_page_stack.set_vexpand(True)
+        self.front_page_view.add(self.front_page_bottom_bar)
+        self.front_page_bottom_bar.set_vexpand(False)
+        self.front_page_headerbar.connect(
+            'squeeze',
+            lambda caller, squeezed: self.front_page_bottom_bar.set_reveal(
+                squeezed
+            )
+        )
         self.add_titled(
             self.front_page_view,
             'front_page',

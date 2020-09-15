@@ -1,9 +1,17 @@
 # from gettext import gettext as _
-from gi.repository import Gtk, Handy
+from gi.repository import Gtk, Handy, GObject
 from redditgtk.confManager import ConfManager
 
 
 class FrontPageHeaderbar(Handy.WindowHandle):
+    __gsignals__ = {
+       'squeeze': (
+           GObject.SignalFlags.RUN_FIRST,
+           None,
+           (bool,)
+        )
+    }
+
     def __init__(self, front_page_stack, **kwargs):
         super().__init__(**kwargs)
         self.front_page_stack = front_page_stack
@@ -13,8 +21,18 @@ class FrontPageHeaderbar(Handy.WindowHandle):
         self.builder.connect_signals(self)
         self.confman = ConfManager()
         self.headerbar = self.builder.get_object('headerbar')
+        self.squeezer = self.builder.get_object('squeezer')
         self.view_switcher = Handy.ViewSwitcher()
-        self.headerbar.set_custom_title(self.view_switcher)
+        self.view_switcher.set_policy(Handy.ViewSwitcherPolicy.WIDE)
+        self.squeezer.add(self.view_switcher)
+        self.squeezer.add(Gtk.Label())
+        self.squeezer.connect(
+            'notify::visible-child',
+            lambda *args: self.emit(
+                'squeeze',
+                self.squeezer.get_visible_child() != self.view_switcher
+            )
+        )
         self.view_switcher.set_valign(Gtk.Align.FILL)
         self.view_switcher.set_stack(self.front_page_stack)
 
