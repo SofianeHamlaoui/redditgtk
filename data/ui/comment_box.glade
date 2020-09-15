@@ -68,6 +68,7 @@
             <property name="justify">fill</property>
             <property name="wrap">True</property>
             <property name="wrap_mode">word-char</property>
+            <property name="selectable">True</property>
           </object>
           <packing>
             <property name="expand">False</property>

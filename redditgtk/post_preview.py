@@ -28,10 +28,23 @@ class PostPreviewListboxRow(Gtk.ListBoxRow):
 class PostPreviewListbox(Gtk.ListBox):
     def __init__(self, post_gen, show_post_func, **kwargs):
         super().__init__(**kwargs)
+        self.get_style_context().add_class('card')
+        self.set_selection_mode(Gtk.SelectionMode.NONE)
         self.post_gen = post_gen
         self.show_post_func = show_post_func
         self.load_more()
         self.connect('row_activated', self.on_row_activate)
+
+        self.set_header_func(self.separator_header_func)
+
+    def separator_header_func(self, row, prev_row):
+        if (
+            prev_row is not None and
+            row.get_header() is None
+        ):
+            row.set_header(
+                Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
+            )
 
     def empty(self, *args):
         while True:
