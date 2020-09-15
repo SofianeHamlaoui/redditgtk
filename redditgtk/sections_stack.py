@@ -10,6 +10,8 @@ class SectionScrolledWindow(Gtk.ScrolledWindow):
         self.connect('edge_reached', self.on_edge_reached)
 
     def on_edge_reached(self, sw, pos):
+        if len(self.post_preview_lbox.get_children()) < 10:
+            return
         if pos == Gtk.PositionType.BOTTOM:
             self.post_preview_lbox.load_more()
 

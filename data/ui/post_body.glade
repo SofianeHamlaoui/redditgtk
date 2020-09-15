@@ -137,6 +137,22 @@
       </packing>
     </child>
     <child>
+      <object class="GtkLabel" id="body_label">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="halign">start</property>
+        <property name="label">body</property>
+        <property name="justify">fill</property>
+        <property name="wrap">True</property>
+        <property name="wrap_mode">word-char</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">4</property>
+      </packing>
+    </child>
+    <child>
       <object class="GtkImage" id="image">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
@@ -144,7 +160,7 @@
       <packing>
         <property name="expand">False</property>
         <property name="fill">True</property>
-        <property name="position">4</property>
+        <property name="position">5</property>
       </packing>
     </child>
     <child>
@@ -221,18 +237,23 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="comments_box">
+          <object class="GtkButtonBox" id="extra_controls_box">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="tooltip_text" translatable="yes">Comments</property>
-            <property name="spacing">6</property>
+            <property name="layout_style">expand</property>
             <child>
-              <object class="GtkSeparator">
+              <object class="GtkButton" id="reply_btn">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="margin_start">6</property>
-                <property name="margin_end">6</property>
-                <property name="orientation">vertical</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="tooltip_text" translatable="yes">Reply</property>
+                <child>
+                  <object class="GtkImage">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="icon_name">mail-reply-sender-symbolic</property>
+                  </object>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -240,42 +261,6 @@
                 <property name="position">1</property>
               </packing>
             </child>
-            <child>
-              <object class="GtkImage">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="icon_name">media-view-subtitles-symbolic</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="comments_label">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label">comments</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">3</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">3</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButtonBox" id="extra_controls_box">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="layout_style">expand</property>
             <child>
               <object class="GtkButton" id="save_btn">
                 <property name="visible">True</property>
@@ -293,7 +278,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
@@ -313,7 +298,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <style>
@@ -331,7 +316,7 @@
       <packing>
         <property name="expand">False</property>
         <property name="fill">True</property>
-        <property name="position">5</property>
+        <property name="position">6</property>
       </packing>
     </child>
   </object>
