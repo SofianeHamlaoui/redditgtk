@@ -1,7 +1,9 @@
-# from gettext import gettext as _
-from gi.repository import Gtk, Handy, GObject
+from gettext import gettext as _
+from gi.repository import Gtk, Handy, GObject, GdkPixbuf
 from redditgtk.confManager import ConfManager
 from redditgtk.new_post_window import NewPostWindow
+from redditgtk.path_utils import is_image
+from redditgtk.download_manager import download_img
 
 
 class FrontPageHeaderbar(Handy.WindowHandle):
@@ -53,7 +55,6 @@ class FrontPageHeaderbar(Handy.WindowHandle):
 
         self.new_btn = self.builder.get_object('new_btn')
         self.new_post_popover = self.builder.get_object('new_post_popover')
-        self.new_post_popover.set_relative_to(self.new_btn)
         self.new_post_popover.set_modal(True)
         self.new_btn.connect(
             'clicked',
@@ -74,8 +75,43 @@ class FrontPageHeaderbar(Handy.WindowHandle):
             'clicked',
             lambda *args: self.on_new_clicked('media')
         )
+
         self.profile_btn = self.builder.get_object('profile_btn')
+        self.profile_popover = self.builder.get_object('profile_popover')
+        self.username_label = self.builder.get_object('username_label')
+        self.karma_label = self.builder.get_object('karma_label')
+        self.user = self.reddit.user.me()
+        self.username_label.set_text(f'u/{self.user.name}')
+        self.karma_label.set_text(_('{0} Karma').format(self.user.total_karma))
+        self.avatar_container = self.builder.get_object('avatar_container')
+        self.avatar = Handy.Avatar.new(
+            42,
+            self.user.name,
+            True
+        )
+        self.avatar.set_image_load_func(self.__set_avatar_func)
+        self.avatar_container.add(self.avatar)
+        self.avatar.set_visible(True)
+        self.profile_btn.connect(
+                'clicked',
+                lambda *args: self.profile_popover.popup()
+        )
+
         self.refresh_btn = self.builder.get_object('refresh_btn')
+
+    def __set_avatar_func(self, *args):
+        icon = self.user.icon_img
+        if is_image(icon):
+            try:
+                return GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                    download_img(icon), 42, 42, True
+                )
+            except Exception:
+                print(
+                    f'Error creating pixbuf for profile image, url: `{icon}`'
+                )
+                return None
+        return None
 
     def on_menu_btn_clicked(self, *args):
         self.menu_popover.popup()

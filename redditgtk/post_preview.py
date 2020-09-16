@@ -1,6 +1,6 @@
 from redditgtk.common_post_box import CommonPostBox
 from gi.repository import Gtk, GLib
-from threading import Thread, Lock
+from threading import Thread
 
 
 class PostPreview(CommonPostBox):
@@ -58,21 +58,17 @@ class PostPreviewListbox(Gtk.ListBox):
         self.add(post_preview_row)
         self.show_all()
 
-    def _async_create_post_preview_row(self, lock, gen):
-        post = None
-        with lock:
-            post = next(gen)
-        row = PostPreviewListboxRow(post)
-        GLib.idle_add(self._on_post_preview_row_loaded, row)
+    def _async_create_post_preview_row(self, gen, num):
+        for n in range(num):
+            row = PostPreviewListboxRow(next(gen))
+            GLib.idle_add(self._on_post_preview_row_loaded, row)
 
     def load_more(self, num=10):
-        lock = Lock()
-        for i in range(num):
-            t = Thread(
-                target=self._async_create_post_preview_row,
-                args=(lock, self.post_gen)
-            )
-            t.start()
+        t = Thread(
+            target=self._async_create_post_preview_row,
+            args=(self.post_gen, num)
+        )
+        t.start()
 
     def on_row_activate(self, lb, row):
         self.show_post_func(row.post)

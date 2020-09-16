@@ -1,4 +1,4 @@
-from gi.repository import Gtk, Gdk, GtkSource
+from gi.repository import Gtk, Gdk, GtkSource, GObject
 
 
 class NewPostWindow(Gtk.Window):
@@ -54,6 +54,17 @@ class NewPostWindow(Gtk.Window):
             source_buffer.set_language(source_lang_md)
             source_view = self.builder.get_object('source_view')
             source_view.set_buffer(source_buffer)
+
+        self.select_subreddit_combobox = self.builder.get_object(
+            'select_subreddit_combobox'
+        )
+        self.list_store = Gtk.ListStore(str, GObject.TYPE_PYOBJECT)
+        for sub in reddit.user.subreddits():
+            self.list_store.append([sub.display_name_prefixed, sub])
+        self.select_subreddit_combobox.set_model(self.list_store)
+        renderer_text = Gtk.CellRendererText()
+        self.select_subreddit_combobox.pack_start(renderer_text, True)
+        self.select_subreddit_combobox.add_attribute(renderer_text, 'text', 0)
 
         self.cancel_btn = self.builder.get_object('cancel_btn')
         self.cancel_btn.connect('clicked', lambda *args: self.destroy())
