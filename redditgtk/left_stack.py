@@ -2,12 +2,14 @@ from gettext import gettext as _
 from gi.repository import Gtk, Handy
 from redditgtk.sections_stack import SectionsStack
 from redditgtk.front_page_headerbar import FrontPageHeaderbar
+from redditgtk.saved_view import SavedView
 
 
 class LeftStack(Gtk.Stack):
     def __init__(self, reddit, show_post_func, **kwargs):
         super().__init__(**kwargs)
         self.reddit = reddit
+        self.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
 
         # Child 1: Front page stack and respective headerbar
         self.front_page_view = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -54,7 +56,24 @@ class LeftStack(Gtk.Stack):
         self.add_titled(
             self.front_page_view,
             'front_page',
-            _('Front Page')
+            _('Front page')
+        )
+
+        # Child 2: Saved items stack (forcedly a stack to preserve structure)
+        self.saved_view = SavedView(self.reddit, show_post_func)
+        self.add_titled(
+            self.saved_view,
+            'saved_view',
+            _('Saved posts')
+        )
+
+        self.front_page_view.headerbar.go_saved_btn.connect(
+            'clicked',
+            lambda *args: self.set_visible_child(self.saved_view)
+        )
+        self.saved_view.headerbar.back_btn.connect(
+            'clicked',
+            lambda *args: self.set_visible_child(self.front_page_view)
         )
 
     def get_headerbar(self):

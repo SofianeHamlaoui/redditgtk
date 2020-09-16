@@ -96,6 +96,11 @@ class FrontPageHeaderbar(Handy.WindowHandle):
                 'clicked',
                 lambda *args: self.profile_popover.popup()
         )
+        self.go_saved_btn = self.builder.get_object('go_saved_btn')
+        self.go_saved_btn.connect(
+            'clicked',
+            lambda *args: self.profile_popover.popdown()
+        )
 
         self.refresh_btn = self.builder.get_object('refresh_btn')
 
