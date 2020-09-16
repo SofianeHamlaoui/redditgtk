@@ -3,8 +3,12 @@
     padding-left: 4px;
 }
 
-.comment_author {
+.comment_author, .blue {
     color: #1c71d8;
+}
+
+.red {
+    color: #ed333b;
 }
 
 .op_comment {

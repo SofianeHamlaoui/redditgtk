@@ -37,7 +37,51 @@ class CommonPostBox(Gtk.Bin):
         self.avatar.set_image_load_func(self.__set_avatar_func)
         self.builder.get_object('avatar_container').add(self.avatar)
 
+        self.save_btn = self.builder.get_object('save_btn')
+        self.save_btn.connect('clicked', self.on_save_clicked)
+
+        self.upvote_btn = self.builder.get_object('upvote_btn')
+        self.downvote_btn = self.builder.get_object('downvote_btn')
+        self.upvote_btn.connect('clicked', self.on_upvote_btn_clicked)
+        self.downvote_btn.connect('clicked', self.on_downvote_btn_clicked)
+        self.on_save_clicked()
+
         self.add(self.main_box)
+
+    def on_save_clicked(self, *args):
+        # TODO: update post obj
+        if self.post.saved:
+            self.save_btn.get_style_context().add_class('blue')
+        else:
+            self.save_btn.get_style_context().remove_class('blue')
+
+    def on_upvote_btn_clicked(self, *args):
+        if self.post.likes:
+            self.post.clear_vote()
+        else:
+            self.post.upvote()
+        # TODO: update post obj
+        self.color_up_down_btns()
+
+    def on_downvote_btn_clicked(self, *args):
+        if self.post.likes or self.post.likes is None:
+            self.post.downvote()
+        else:
+            self.post.clear_vote()
+        self.color_up_down_btns()
+
+    def color_up_down_btns(self):
+        upvote_style_context = self.upvote_btn.get_style_context()
+        downvote_style_context = self.downvote_btn.get_style_context()
+        if self.post.likes is None:  # None = no interaction
+            upvote_style_context.remove_class('blue')
+            downvote_style_context.remove_class('red')
+        elif self.post.likes:  # True = upvote
+            upvote_style_context.add_class('blue')
+            downvote_style_context.remove_class('red')
+        else:  # False = downvote
+            upvote_style_context.remove_class('blue')
+            downvote_style_context.add_class('red')
 
     def get_subreddit_icon(self):
         if is_image(self.post.subreddit.icon_img):
