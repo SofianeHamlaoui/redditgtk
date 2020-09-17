@@ -19,10 +19,18 @@ import sys
 # import argparse
 # from gettext import gettext as _
 # from os.path import isfile
-from gi.repository import Gtk, Gdk, Gio, Handy  # , GLib
+from gi.repository import Gtk, Gdk, Gio, Handy, GLib
 from redditgtk.confManager import ConfManager
 from redditgtk.app_window import AppWindow
 from redditgtk.settings_window import SettingsWindow
+from redditgtk.api.auth import (
+    get_preauthorized_client,
+    get_unauthorized_client,
+    get_authorized_client,
+    get_auth_link
+)
+from redditgtk.webview import LoginWindow
+from threading import Thread
 
 
 class GApplication(Gtk.Application):
@@ -33,9 +41,9 @@ class GApplication(Gtk.Application):
             **kwargs
         )
         self.confman = ConfManager()
-        self.window = AppWindow()
-        self.confman.window = self.window
-        self.window.connect('destroy', self.on_destroy_window)
+        self.reddit = None
+        self.login_window = None
+        self.window = None
 
     def do_startup(self):
         Gtk.Application.do_startup(self)
@@ -99,8 +107,44 @@ class GApplication(Gtk.Application):
         settings_win.set_modal(True)
         settings_win.present()
 
+    def _async_get_reddit_client(self, reddit):
+        reddit_auth = get_authorized_client(reddit=reddit)
+        GLib.idle_add(self.continue_activate, reddit_auth)
+
+    def get_reddit_client(self, refresh_token=None):
+        if refresh_token is None:
+            refresh_token = self.confman.conf['refresh_token']
+        if refresh_token != '':
+            try:
+                return self.continue_activate(
+                    get_preauthorized_client(refresh_token)
+                )
+            except Exception:
+                return self.get_reddit_client('')
+        else:
+            reddit = get_unauthorized_client()
+            self.login_window = LoginWindow(get_auth_link(reddit))
+            t = Thread(
+                target=self._async_get_reddit_client,
+                args=(reddit,),
+                daemon=True
+            )
+
+            def on_login_win_destroy(*args):
+                if self.reddit is None:
+                    self.quit()
+                    sys.exit(0)
+
+            self.login_window.connect(
+                'destroy',
+                on_login_win_destroy
+            )
+            self.add_window(self.login_window)
+            self.login_window.present()
+            self.login_window.show_all()
+            t.start()
+
     def do_activate(self):
-        self.add_window(self.window)
         stylecontext = Gtk.StyleContext()
         provider = Gtk.CssProvider()
         provider.load_from_resource(
@@ -111,6 +155,16 @@ class GApplication(Gtk.Application):
             provider,
             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
+        self.get_reddit_client()
+
+    def continue_activate(self, reddit):
+        self.reddit = reddit
+        if self.login_window is not None:
+            self.login_window.destroy()
+        self.window = AppWindow(self.reddit)
+        self.confman.window = self.window
+        self.window.connect('destroy', self.on_destroy_window)
+        self.add_window(self.window)
         self.window.present()
         self.window.show_all()
         if hasattr(self, 'args'):

@@ -2,20 +2,21 @@ from gettext import gettext as _
 import praw
 from datetime import datetime
 from flask import Flask, request
-from multiprocessing import Queue, Process
+from threading import Thread
+from queue import Queue
 from time import sleep
 from redditgtk.confManager import ConfManager
 
 
-def get_authorized_client(openLinkFunction, retry=False):
-
-    reddit = get_unauthorized_client()
+def get_authorized_client(openLinkFunction=None, retry=False, reddit=None):
+    if reddit is None:
+        reddit = get_unauthorized_client()
     confman = ConfManager()
     refresh_token = ''
     code = ''
     if not retry:
         refresh_token = confman.conf['refresh_token']
-    
+
     if refresh_token != '':
         try:
             return get_preauthorized_client(refresh_token)
@@ -30,13 +31,11 @@ def get_authorized_client(openLinkFunction, retry=False):
         def cb(code):
             q.put(code)
 
-        p = Process(target=start_auth_callback_server, args=(cb,))
-        p.start()
-        openLinkFunction(get_auth_link(reddit))
+        t = Thread(target=start_auth_callback_server, args=(cb,))
+        t.start()
+        if openLinkFunction is not None:
+            openLinkFunction(get_auth_link(reddit))
         code = q.get()
-        sleep(1)  # give flask the time to respond
-        p.terminate()
-        p.join()
     try:
         refresh_token = reddit.auth.authorize(code)
         confman.conf['refresh_token'] = refresh_token
@@ -96,5 +95,6 @@ def start_auth_callback_server(callback):
     def root():
         code = request.args.get('code')
         callback(code)
+        request.environ.get('werkzeug.server.shutdown')()
         return 'ok'
     app.run(host='localhost', port=8080)

@@ -5,16 +5,17 @@ from redditgtk.accel_manager import add_accelerators
 
 
 class AppWindow(Handy.ApplicationWindow):
-    def __init__(self, **kwargs):
+    def __init__(self, reddit, **kwargs):
         super().__init__(**kwargs)
         self.confman = ConfManager()
+        self.reddit = reddit
 
         self.set_title('Reddit GTK')
         self.set_icon_name('org.gabmus.redditgtk')
 
         self.main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
-        self.main_ui = MainUI()
+        self.main_ui = MainUI(self.reddit)
         self.main_box.add(self.main_ui)
         self.main_ui.set_hexpand(True)
         self.main_ui.set_vexpand(True)
@@ -57,6 +58,7 @@ class AppWindow(Handy.ApplicationWindow):
             'width': self.size_allocation.width,
             'height': self.size_allocation.height
         }
+        self.hide()
         self.confman.save_conf()
 
     def update_size_allocation(self, *args):

@@ -26,3 +26,15 @@
 .card > row:hover {
     border-radius: 5px;
 }
+
+.welcome-title {
+    font-weight: 300;
+    font-size: 20pt;
+    letter-spacing: 0.1rem;
+}
+
+.login-button {
+    font-size: 18pt;
+    margin-top: 12px;
+    padding: 12px 24px;
+}
