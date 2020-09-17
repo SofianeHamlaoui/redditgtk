@@ -102,6 +102,12 @@ class FrontPageHeaderbar(Handy.WindowHandle):
             lambda *args: self.profile_popover.popdown()
         )
 
+        self.go_logout_btn = self.builder.get_object('go_logout_btn')
+        self.go_logout_btn.connect(
+            'clicked',
+            self.on_logout
+        )
+
         self.refresh_btn = self.builder.get_object('refresh_btn')
 
     def __set_avatar_func(self, *args):
@@ -117,6 +123,22 @@ class FrontPageHeaderbar(Handy.WindowHandle):
                 )
                 return None
         return None
+
+    def on_logout(self, *args):
+        self.profile_popover.popdown()
+        dialog = Gtk.MessageDialog(
+            self.get_toplevel(),
+            Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+            Gtk.MessageType.QUESTION,
+            Gtk.ButtonsType.YES_NO,
+            _('Do you want to log out? This will close the application.')
+        )
+        res = dialog.run()
+        dialog.close()
+        if res == Gtk.ResponseType.YES:
+            self.confman.conf['refresh_token'] = ''
+            self.confman.save_conf()
+            self.get_toplevel().destroy()
 
     def on_menu_btn_clicked(self, *args):
         self.menu_popover.popup()
