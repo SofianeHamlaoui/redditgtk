@@ -90,7 +90,8 @@ class GApplication(Gtk.Application):
         dialog.present()
 
     def on_destroy_window(self, *args):
-        self.window.on_destroy()
+        if self.window:
+            self.window.on_destroy()
         self.quit()
 
     def show_shortcuts_window(self, *args):

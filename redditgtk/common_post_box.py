@@ -3,6 +3,7 @@ from redditgtk.download_manager import download_img
 from gi.repository import Gtk, GdkPixbuf, Handy
 from dateutil import tz
 from datetime import datetime
+from os import system
 
 
 class CommonPostBox(Gtk.Bin):
@@ -45,6 +46,12 @@ class CommonPostBox(Gtk.Bin):
         self.upvote_btn.connect('clicked', self.on_upvote_btn_clicked)
         self.downvote_btn.connect('clicked', self.on_downvote_btn_clicked)
         self.on_save_clicked()
+
+        self.open_link_btn = self.builder.get_object('open_link_btn')
+        self.open_link_btn.connect(
+            'clicked',
+            lambda *args: system(f'xdg-open "{self.post.url}"')
+        )
 
         self.add(self.main_box)
 

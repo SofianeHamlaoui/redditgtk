@@ -4,7 +4,6 @@ from datetime import datetime
 from flask import Flask, request
 from threading import Thread
 from queue import Queue
-from time import sleep
 from redditgtk.confManager import ConfManager
 
 

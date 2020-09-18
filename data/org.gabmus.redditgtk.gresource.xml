@@ -22,5 +22,6 @@
     <file preprocess="xml-stripblanks">icons/org.gabmus.redditgtk.best-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/org.gabmus.redditgtk.hot-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/org.gabmus.redditgtk.new-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/org.gabmus.redditgtk.open-link-symbolic.svg</file>
   </gresource>
 </gresources>
