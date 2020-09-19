@@ -53,7 +53,7 @@ class CommonPostBox(Gtk.Bin):
         self.downvote_btn = self.builder.get_object('downvote_btn')
         self.upvote_btn.connect('clicked', self.on_upvote_btn_clicked)
         self.downvote_btn.connect('clicked', self.on_downvote_btn_clicked)
-        self.on_save_clicked()
+        self.color_saved_btn()
 
         self.open_link_btn = self.builder.get_object('open_link_btn')
         self.open_link_btn.connect(
@@ -64,7 +64,11 @@ class CommonPostBox(Gtk.Bin):
         self.add(self.main_box)
 
     def on_save_clicked(self, *args):
+        self.post.save()
         # TODO: update post obj
+        self.color_saved_btn()
+
+    def color_saved_btn(self):
         if self.post.saved:
             self.save_btn.get_style_context().add_class('blue')
         else:
