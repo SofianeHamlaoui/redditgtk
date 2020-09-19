@@ -1,22 +1,23 @@
 from gettext import gettext as _
 from gi.repository import Gtk, Handy
-from redditgtk.common_post_box import CommonPostBox
+from redditgtk.common_post_box import CommonPostBox, InteractiveEntityBox
 from praw.models import MoreComments
 
 
-class CommentBox(Gtk.Bin):
+class CommentBox(InteractiveEntityBox):
     def __init__(self, comment, level=0, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(
+            comment,
+            Gtk.Builder.new_from_resource(
+                '/org/gabmus/redditgtk/ui/comment_box.glade'
+            ),
+            **kwargs
+        )
         self.comment = comment
         self.level = level
-
-        self.builder = Gtk.Builder.new_from_resource(
-            '/org/gabmus/redditgtk/ui/comment_box.glade'
-        )
         self.author_label = self.builder.get_object('author_label')
         self.op_icon = self.builder.get_object('op_icon')
         self.comment_label = self.builder.get_object('comment_label')
-        self.upvotes_label = self.builder.get_object('upvotes_label')
         self.replies_container = self.builder.get_object('replies_container')
 
         self.comment_label.set_text(self.comment.body)
@@ -24,11 +25,10 @@ class CommentBox(Gtk.Bin):
         if hasattr(self.comment, 'author') and self.comment.author is not None:
             author_name = f'u/{self.comment.author.name}'
         self.author_label.set_text(author_name)
-        self.upvotes_label.set_text(str(self.comment.ups))
 
         if self.level > 0:
             self.builder.get_object(
-                'comment_box'
+                'main_box'
             ).get_style_context().add_class('nested')
         if self.comment.is_submitter:
             self.author_label.get_style_context().add_class('op_comment')
@@ -51,7 +51,6 @@ class CommentBox(Gtk.Bin):
                 False,
                 0
             )
-        self.add(self.builder.get_object('comment_box'))
 
 
 class MultiCommentsBox(Gtk.Box):

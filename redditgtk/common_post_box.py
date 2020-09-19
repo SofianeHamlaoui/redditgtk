@@ -9,12 +9,109 @@ from praw.models import Comment, Submission
 from threading import Thread
 
 
-class CommonPostBox(Gtk.Bin):
-    def __init__(self, post, builder, **kwargs):
+class InteractiveEntityBox(Gtk.Bin):
+    def __init__(self, entity, builder, **kwargs):
         super().__init__(**kwargs)
-        self.post = post
+        self.entity = entity
         self.builder = builder
+
+        self.save_btn = self.builder.get_object('save_btn')
+        self.save_btn.connect('clicked', self.on_save_clicked)
+        self.upvotes_label = self.builder.get_object('upvotes_label')
+        self.upvote_btn = self.builder.get_object('upvote_btn')
+        self.downvote_btn = self.builder.get_object('downvote_btn')
+        self.color_up_down_btns()
+        self.upvote_btn.connect('clicked', self.on_upvote_btn_clicked)
+        self.downvote_btn.connect('clicked', self.on_downvote_btn_clicked)
+        self.color_saved_btn()
+
         self.main_box = self.builder.get_object('main_box')
+        self.add(self.main_box)
+
+    def on_save_clicked(self, *args):
+
+        def af():
+            if self.entity.saved:
+                self.entity.unsave()
+            else:
+                self.entity.save()
+            self.entity._fetch()
+
+            def cb():
+                self.color_saved_btn()
+                self.save_btn.set_sensitive(True)
+
+            GLib.idle_add(cb)
+
+        self.save_btn.set_sensitive(False)
+        Thread(target=af).start()
+
+    def color_saved_btn(self):
+        if self.entity.saved:
+            self.save_btn.get_style_context().add_class('blue')
+        else:
+            self.save_btn.get_style_context().remove_class('blue')
+
+    def on_upvote_btn_clicked(self, *args):
+
+        def af():
+            if self.entity.likes:
+                self.entity.clear_vote()
+            else:
+                self.entity.upvote()
+            self.entity._fetch()
+
+            def cb():
+                self.color_up_down_btns()
+                self.downvote_btn.set_sensitive(True)
+                self.upvote_btn.set_sensitive(True)
+
+            GLib.idle_add(cb)
+
+        self.upvote_btn.set_sensitive(False)
+        self.downvote_btn.set_sensitive(False)
+        Thread(target=af).start()
+
+    def on_downvote_btn_clicked(self, *args):
+
+        def af():
+            if self.entity.likes or self.entity.likes is None:
+                self.entity.downvote()
+            else:
+                self.entity.clear_vote()
+            self.entity._fetch()
+
+            def cb():
+                self.color_up_down_btns()
+                self.downvote_btn.set_sensitive(True)
+                self.upvote_btn.set_sensitive(True)
+
+            GLib.idle_add(cb)
+
+        self.upvote_btn.set_sensitive(False)
+        self.downvote_btn.set_sensitive(False)
+        Thread(target=af).start()
+
+    def color_up_down_btns(self):
+        # also update ups label
+        self.upvotes_label.set_text(str(self.entity.ups))
+        upvote_style_context = self.upvote_btn.get_style_context()
+        downvote_style_context = self.downvote_btn.get_style_context()
+        if self.entity.likes is None:  # None = no interaction
+            upvote_style_context.remove_class('blue')
+            downvote_style_context.remove_class('red')
+        elif self.entity.likes:  # True = upvote
+            upvote_style_context.add_class('blue')
+            downvote_style_context.remove_class('red')
+        else:  # False = downvote
+            upvote_style_context.remove_class('blue')
+            downvote_style_context.add_class('red')
+
+
+class CommonPostBox(InteractiveEntityBox):
+    def __init__(self, post, builder, **kwargs):
+        super().__init__(post, builder, **kwargs)
+        self.post = post
 
         self.title_label = self.builder.get_object('title_label')
         if isinstance(self.post, Submission):
@@ -32,8 +129,6 @@ class CommonPostBox(Gtk.Bin):
             f'u/{self.post.author.name}'
             if self.post.author is not None else _('Author unknown')
         )
-        self.upvotes_label = self.builder.get_object('upvotes_label')
-        self.upvotes_label.set_text(str(self.post.ups))
         self.flairs_flowbox = self.builder.get_object('flairs_flowbox')
         self.image = self.builder.get_object('image')
         post_img = self.get_post_image_pixbuf()
@@ -47,99 +142,11 @@ class CommonPostBox(Gtk.Bin):
         self.avatar.set_image_load_func(self.__set_avatar_func)
         self.builder.get_object('avatar_container').add(self.avatar)
 
-        self.save_btn = self.builder.get_object('save_btn')
-        self.save_btn.connect('clicked', self.on_save_clicked)
-
-        self.upvote_btn = self.builder.get_object('upvote_btn')
-        self.downvote_btn = self.builder.get_object('downvote_btn')
-        self.upvote_btn.connect('clicked', self.on_upvote_btn_clicked)
-        self.downvote_btn.connect('clicked', self.on_downvote_btn_clicked)
-        self.color_saved_btn()
-
         self.open_link_btn = self.builder.get_object('open_link_btn')
         self.open_link_btn.connect(
             'clicked',
             lambda *args: system(f'xdg-open "{self.post.url}"')
         )
-
-        self.add(self.main_box)
-
-    def on_save_clicked(self, *args):
-
-        def af():
-            if self.post.saved:
-                self.post.unsave()
-            else:
-                self.post.save()
-            self.post._fetch()
-
-            def cb():
-                self.color_saved_btn()
-                self.save_btn.set_sensitive(True)
-
-            GLib.idle_add(cb)
-
-        self.save_btn.set_sensitive(False)
-        Thread(target=af).start()
-
-    def color_saved_btn(self):
-        if self.post.saved:
-            self.save_btn.get_style_context().add_class('blue')
-        else:
-            self.save_btn.get_style_context().remove_class('blue')
-
-    def on_upvote_btn_clicked(self, *args):
-
-        def af():
-            if self.post.likes:
-                self.post.clear_vote()
-            else:
-                self.post.upvote()
-            self.post._fetch()
-
-            def cb():
-                self.color_up_down_btns()
-                self.downvote_btn.set_sensitive(True)
-                self.upvote_btn.set_sensitive(True)
-
-            GLib.idle_add(cb)
-
-        self.upvote_btn.set_sensitive(False)
-        self.downvote_btn.set_sensitive(False)
-        Thread(target=af).start()
-
-    def on_downvote_btn_clicked(self, *args):
-
-        def af():
-            if self.post.likes or self.post.likes is None:
-                self.post.downvote()
-            else:
-                self.post.clear_vote()
-            self.post._fetch()
-            
-            def cb():
-                self.color_up_down_btns()
-                self.downvote_btn.set_sensitive(True)
-                self.upvote_btn.set_sensitive(True)
-
-            GLib.idle_add(cb)
-
-        self.upvote_btn.set_sensitive(False)
-        self.downvote_btn.set_sensitive(False)
-        Thread(target=af).start()
-
-    def color_up_down_btns(self):
-        upvote_style_context = self.upvote_btn.get_style_context()
-        downvote_style_context = self.downvote_btn.get_style_context()
-        if self.post.likes is None:  # None = no interaction
-            upvote_style_context.remove_class('blue')
-            downvote_style_context.remove_class('red')
-        elif self.post.likes:  # True = upvote
-            upvote_style_context.add_class('blue')
-            downvote_style_context.remove_class('red')
-        else:  # False = downvote
-            upvote_style_context.remove_class('blue')
-            downvote_style_context.add_class('red')
 
     def get_subreddit_icon(self):
         if is_image(self.post.subreddit.icon_img):
