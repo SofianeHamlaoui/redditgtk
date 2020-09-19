@@ -14,7 +14,7 @@ class MainUI(Gtk.Bin):
         self.ui_box = self.builder.get_object('ui_box')
 
         # TODO: remove
-        from redditgtk.main_leaflet import MainDeck
+        from redditgtk.main_deck import MainDeck
         self.leaflet = MainDeck(reddit)
         self.ui_box.add(self.leaflet)
         self.leaflet.set_vexpand(True)

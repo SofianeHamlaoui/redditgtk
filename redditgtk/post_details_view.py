@@ -1,6 +1,7 @@
 from gettext import gettext as _
 from gi.repository import Gtk, Handy
 from redditgtk.common_post_box import CommonPostBox
+from praw.models import MoreComments
 
 
 class CommentBox(Gtk.Bin):
@@ -38,8 +39,14 @@ class CommentBox(Gtk.Bin):
             self.op_icon.set_visible(False)
             self.op_icon.set_no_show_all(True)
         for reply in self.comment.replies.list():
+            w = None
+            if isinstance(reply, MoreComments):
+                w = Gtk.Button()
+                w.set_label(_('More comments'))
+            else:
+                w = CommentBox(reply, level+1)
             self.replies_container.pack_start(
-                CommentBox(reply, level+1),
+                w,
                 False,
                 False,
                 0
@@ -48,15 +55,21 @@ class CommentBox(Gtk.Bin):
 
 
 class MultiCommentsBox(Gtk.Box):
-    def __init__(self, comments, **kwargs):
+    def __init__(self, comments, level=0, **kwargs):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, **kwargs)
         if isinstance(comments, list):
             self.comments = comments
         else:
             self.comments = comments.list()
         for comment in self.comments:
+            w = None
+            if isinstance(comment, MoreComments):
+                w = Gtk.Button()
+                w.set_label(_('More comments'))
+            else:
+                w = CommentBox(comment, level)
             self.pack_start(
-                CommentBox(comment),
+                w,
                 False,
                 False,
                 6

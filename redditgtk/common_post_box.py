@@ -1,9 +1,11 @@
+from gettext import gettext as _
 from redditgtk.path_utils import is_image
 from redditgtk.download_manager import download_img
 from gi.repository import Gtk, GdkPixbuf, Handy
 from dateutil import tz
 from datetime import datetime
 from os import system
+from praw.models import Comment, Submission
 
 
 class CommonPostBox(Gtk.Bin):
@@ -14,7 +16,10 @@ class CommonPostBox(Gtk.Bin):
         self.main_box = self.builder.get_object('main_box')
 
         self.title_label = self.builder.get_object('title_label')
-        self.title_label.set_text(self.post.title)
+        if isinstance(self.post, Submission):
+            self.title_label.set_text(self.post.title)
+        else:
+            self.title_label.set_text(_('Comment: ')+self.post.body[:50]+'...')
         self.datetime_label = self.builder.get_object('datetime_label')
         self.datetime_label.set_text(
             str(self.__utc_timestamp_to_local(self.post.created_utc))
@@ -22,7 +27,10 @@ class CommonPostBox(Gtk.Bin):
         self.subreddit_label = self.builder.get_object('subreddit_label')
         self.subreddit_label.set_text(self.post.subreddit_name_prefixed)
         self.op_label = self.builder.get_object('op_label')
-        self.op_label.set_text(f'u/{self.post.author.name}')
+        self.op_label.set_text(
+            f'u/{self.post.author.name}'
+            if self.post.author is not None else _('Author unknown')
+        )
         self.upvotes_label = self.builder.get_object('upvotes_label')
         self.upvotes_label.set_text(str(self.post.ups))
         self.flairs_flowbox = self.builder.get_object('flairs_flowbox')
@@ -95,6 +103,9 @@ class CommonPostBox(Gtk.Bin):
             return download_img(self.post.subreddit.icon_img)
 
     def get_post_image_pixbuf(self):
+        if isinstance(self.post, Comment):
+            return None
+        image = 'No image'
         try:
             image = self.post.url
             if not is_image(image):

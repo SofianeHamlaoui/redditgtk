@@ -2,7 +2,7 @@ from gettext import gettext as _
 from gi.repository import Gtk, Handy
 from redditgtk.sections_stack import SectionsStack
 from redditgtk.front_page_headerbar import FrontPageHeaderbar
-from redditgtk.saved_view import SavedView
+from redditgtk.single_post_stream_view import SinglePostStreamView
 
 
 class LeftStack(Gtk.Stack):
@@ -60,7 +60,12 @@ class LeftStack(Gtk.Stack):
         )
 
         # Child 2: Saved items stack (forcedly a stack to preserve structure)
-        self.saved_view = SavedView(self.reddit, show_post_func)
+        self.saved_view = SinglePostStreamView(
+            self.reddit.user.me().saved(),
+            'saved',
+            _('Saved posts'),
+            show_post_func
+        )
         self.add_titled(
             self.saved_view,
             'saved_view',
@@ -71,10 +76,32 @@ class LeftStack(Gtk.Stack):
             'clicked',
             lambda *args: self.set_visible_child(self.saved_view)
         )
-        self.saved_view.headerbar.back_btn.connect(
-            'clicked',
-            lambda *args: self.set_visible_child(self.front_page_view)
+
+        # Child 3: Profile stack (forcedly a stack to preserve structure)
+        self.profile_view = SinglePostStreamView(
+            self.reddit.user.me().new(),
+            'profile',
+            _('Profile'),
+            show_post_func
         )
+        self.add_titled(
+            self.profile_view,
+            'profile_view',
+            _('Profile')
+        )
+
+        self.front_page_view.headerbar.go_profile_btn.connect(
+            'clicked',
+            lambda *args: self.set_visible_child(self.profile_view)
+        )
+
+        for view in (
+                self.saved_view, self.profile_view
+        ):
+            view.headerbar.back_btn.connect(
+                'clicked',
+                lambda *args: self.set_visible_child(self.front_page_view)
+            )
 
     def get_headerbar(self):
         return self.get_visible_child().headerbar

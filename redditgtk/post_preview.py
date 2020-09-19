@@ -1,6 +1,7 @@
 from redditgtk.common_post_box import CommonPostBox
 from gi.repository import Gtk, GLib
 from threading import Thread
+from praw.models import Submission
 
 
 class PostPreview(CommonPostBox):
@@ -12,8 +13,13 @@ class PostPreview(CommonPostBox):
             ),
             **kwargs
         )
-        self.comments_label = self.builder.get_object('comments_label')
-        self.comments_label.set_text(str(len(self.post.comments)))
+        if isinstance(self.post, Submission):
+            self.comments_label = self.builder.get_object('comments_label')
+            self.comments_label.set_text(str(len(self.post.comments)))
+        else:
+            comments_box = self.builder.get_object('comments_box')
+            comments_box.set_visible(False)
+            comments_box.set_no_show_all(True)
 
 
 class PostPreviewListboxRow(Gtk.ListBoxRow):

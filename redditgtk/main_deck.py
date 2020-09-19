@@ -1,6 +1,7 @@
 from gi.repository import Gtk, Handy
 from redditgtk.left_stack import LeftStack
 from redditgtk.post_details_view import PostDetailsView
+from praw.models import Comment
 
 
 class MainDeck(Handy.Deck):
@@ -21,6 +22,8 @@ class MainDeck(Handy.Deck):
     def show_post(self, post):
         for child in self.post_view_container.get_children():
             self.post_view_container.remove(child)
+        if isinstance(post, Comment):
+            post = post.submission
         details_view = PostDetailsView(post, self.go_back)
         self.post_view_container.add(details_view)
         details_view.set_vexpand(True)

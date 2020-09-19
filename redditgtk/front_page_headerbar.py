@@ -102,6 +102,12 @@ class FrontPageHeaderbar(Handy.WindowHandle):
             lambda *args: self.profile_popover.popdown()
         )
 
+        self.go_profile_btn = self.builder.get_object('go_profile_btn')
+        self.go_profile_btn.connect(
+            'clicked',
+            lambda *args: self.profile_popover.popdown()
+        )
+
         self.go_logout_btn = self.builder.get_object('go_logout_btn')
         self.go_logout_btn.connect(
             'clicked',
