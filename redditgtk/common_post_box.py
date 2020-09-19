@@ -1,11 +1,12 @@
 from gettext import gettext as _
 from redditgtk.path_utils import is_image
 from redditgtk.download_manager import download_img
-from gi.repository import Gtk, GdkPixbuf, Handy
+from gi.repository import Gtk, GdkPixbuf, Handy, GLib
 from dateutil import tz
 from datetime import datetime
 from os import system
 from praw.models import Comment, Submission
+from threading import Thread
 
 
 class CommonPostBox(Gtk.Bin):
@@ -64,9 +65,22 @@ class CommonPostBox(Gtk.Bin):
         self.add(self.main_box)
 
     def on_save_clicked(self, *args):
-        self.post.save()
-        # TODO: update post obj
-        self.color_saved_btn()
+
+        def af():
+            if self.post.saved:
+                self.post.unsave()
+            else:
+                self.post.save()
+            self.post._fetch()
+
+            def cb():
+                self.color_saved_btn()
+                self.save_btn.set_sensitive(True)
+
+            GLib.idle_add(cb)
+
+        self.save_btn.set_sensitive(False)
+        Thread(target=af).start()
 
     def color_saved_btn(self):
         if self.post.saved:
@@ -75,19 +89,44 @@ class CommonPostBox(Gtk.Bin):
             self.save_btn.get_style_context().remove_class('blue')
 
     def on_upvote_btn_clicked(self, *args):
-        if self.post.likes:
-            self.post.clear_vote()
-        else:
-            self.post.upvote()
-        # TODO: update post obj
-        self.color_up_down_btns()
+
+        def af():
+            if self.post.likes:
+                self.post.clear_vote()
+            else:
+                self.post.upvote()
+            self.post._fetch()
+
+            def cb():
+                self.color_up_down_btns()
+                self.downvote_btn.set_sensitive(True)
+                self.upvote_btn.set_sensitive(True)
+
+            GLib.idle_add(cb)
+
+        self.upvote_btn.set_sensitive(False)
+        self.downvote_btn.set_sensitive(False)
+        Thread(target=af).start()
 
     def on_downvote_btn_clicked(self, *args):
-        if self.post.likes or self.post.likes is None:
-            self.post.downvote()
-        else:
-            self.post.clear_vote()
-        self.color_up_down_btns()
+
+        def af():
+            if self.post.likes or self.post.likes is None:
+                self.post.downvote()
+            else:
+                self.post.clear_vote()
+            self.post._fetch()
+            
+            def cb():
+                self.color_up_down_btns()
+                self.downvote_btn.set_sensitive(True)
+                self.upvote_btn.set_sensitive(True)
+
+            GLib.idle_add(cb)
+
+        self.upvote_btn.set_sensitive(False)
+        self.downvote_btn.set_sensitive(False)
+        Thread(target=af).start()
 
     def color_up_down_btns(self):
         upvote_style_context = self.upvote_btn.get_style_context()
