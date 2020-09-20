@@ -1,5 +1,6 @@
 from gi.repository import Gtk, Gdk, GtkSource, GObject
 from os.path import isfile
+from redditgtk.path_utils import is_image, is_video
 
 
 class NewPostWindow(Gtk.Window):
@@ -100,6 +101,30 @@ class NewPostWindow(Gtk.Window):
         self.add_accel_group(self.accel_group)
 
     def on_send(self, *args):
+        subreddit = self.get_selected_subreddit()
+        title = self.title_entry.get_text().strip()
+        if self.post_type in ('text', 'link'):
+            subreddit.submit(
+                title=title,
+                selftext=(
+                    self.get_sourcebuffer_text() if self.post_type == 'text'
+                    else None
+                ),
+                url=(
+                    self.link_entry.get_text().strip()
+                    if self.post_type == 'link'
+                    else None
+                )
+            )
+        else:
+            media = self.get_selected_media()
+            if is_image(media):
+                subreddit.submit_image(
+                    title=title,
+                    image_path=media
+                )
+            elif is_video(media):
+                pass
         # TODO: send post
         # TODO: verify that post has been sent before closing, else show error
         self.destroy()
@@ -107,10 +132,10 @@ class NewPostWindow(Gtk.Window):
     def on_input(self, *args):
         self.send_btn.set_sensitive(
             self.get_selected_subreddit() is not None and
-            len(self.title_entry.get_text()) > 0 and
+            len(self.title_entry.get_text().strip()) > 0 and
             (
                 self.post_type != 'text' or
-                len(self.get_sourcebuffer_text().strip()) > 0
+                len(self.get_sourcebuffer_text()) > 0
             ) and
             (
                 self.post_type != 'link' or
@@ -118,12 +143,18 @@ class NewPostWindow(Gtk.Window):
             ) and
             (
                 self.post_type != 'media' or
-                isfile(self.get_selected_media())
+                (self.validate_selected_media())
             )
         )
 
     def get_selected_media(self):
         return self.file_chooser_btn.get_filename()
+
+    def validate_selected_media(self):
+        media = self.get_selected_media()
+        return media is not None and isfile(media) and (
+            is_image(media) or is_video(media)
+        )
 
     def get_sourcebuffer_text(self):
         return self.source_buffer.get_text(

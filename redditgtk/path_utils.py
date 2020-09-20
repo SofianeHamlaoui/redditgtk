@@ -13,3 +13,10 @@ def is_image(path: str) -> bool:
         'jpg', 'jpeg', 'png', 'bmp', 'tiff', 'svg', 'gif'
     ]
 
+
+def is_video(path: str) -> bool:
+    if path is None:
+        return False
+    return splitext(path)[-1].strip('.').split('?')[0].lower() in [
+        'mp4', 'webm'
+    ]
