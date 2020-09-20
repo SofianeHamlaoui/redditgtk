@@ -38,15 +38,9 @@ class CommentBox(InteractiveEntityBox):
             self.author_label.get_style_context().add_class('comment_author')
             self.op_icon.set_visible(False)
             self.op_icon.set_no_show_all(True)
-        for reply in self.comment.replies.list():
-            w = None
-            if isinstance(reply, MoreComments):
-                w = Gtk.Button()
-                w.set_label(_('More comments'))
-            else:
-                w = CommentBox(reply, level+1)
+        for reply in self.comment.replies:
             self.replies_container.pack_start(
-                w,
+                CommentBox(reply, level+1),
                 False,
                 False,
                 0
@@ -56,19 +50,11 @@ class CommentBox(InteractiveEntityBox):
 class MultiCommentsBox(Gtk.Box):
     def __init__(self, comments, level=0, **kwargs):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, **kwargs)
-        if isinstance(comments, list):
-            self.comments = comments
-        else:
-            self.comments = comments.list()
+        self.comments = comments
+        self.comments.replace_more(limit=None)
         for comment in self.comments:
-            w = None
-            if isinstance(comment, MoreComments):
-                w = Gtk.Button()
-                w.set_label(_('More comments'))
-            else:
-                w = CommentBox(comment, level)
             self.pack_start(
-                w,
+                CommentBox(comment, level),
                 False,
                 False,
                 6
